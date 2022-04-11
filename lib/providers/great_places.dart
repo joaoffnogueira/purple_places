@@ -7,6 +7,23 @@ import 'package:purple_places/utils/db_utils.dart';
 class GreatPlaces with ChangeNotifier {
   List<Place> _items = [];
 
+  Future<void> loadPlaces() async {
+    final dataList = await DbUtils.getData('places');
+    _items = dataList
+        .map((item) => Place(
+              id: item['id'],
+              title: item['title'],
+              image: File(item['image']),
+              location: PlaceLocation(
+                latitude: item['loc_lat'],
+                longitude: item['loc_lng'],
+                address: item['address'],
+              ),
+            ))
+        .toList();
+    notifyListeners();
+  }
+
   List<Place> get items {
     return [..._items];
   }
