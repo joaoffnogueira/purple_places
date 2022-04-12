@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:purple_places/providers/great_places.dart';
 import 'package:purple_places/widgets/image_input.dart';
@@ -15,19 +16,34 @@ class PlaceFormScreen extends StatefulWidget {
 class _PlaceFormScreenState extends State<PlaceFormScreen> {
   final _titleController = TextEditingController();
   File _storedImage = File('');
+  LatLng _pickedPosition = LatLng(0, 0);
 
   void _selectImage(File pickedImage) {
-    _storedImage = pickedImage;
+    setState(() {
+      _storedImage = pickedImage;
+    });
+  }
+
+  void _selectPosition(LatLng position) {
+    setState(() {
+      _pickedPosition = position;
+    });
+  }
+
+  bool _isValidForm() {
+    return _titleController.text.isNotEmpty &&
+        _storedImage.path != '' &&
+        _pickedPosition != LatLng(0, 0);
   }
 
   void _submit() {
     final title = _titleController.text;
-    if (title.isEmpty || _storedImage.path == '') {
-      return;
-    }
+    if (!_isValidForm()) return;
+
     Provider.of<GreatPlaces>(context, listen: false).addPlace(
       title,
       _storedImage,
+      _pickedPosition,
     );
     Navigator.of(context).pop();
   }
@@ -52,11 +68,14 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
                         decoration: InputDecoration(
                           labelText: 'Nome do Lugar',
                         ),
+                        onChanged: (text) {
+                          setState(() {});
+                        },
                       ),
                       SizedBox(height: 10),
                       ImageInput(onSelectImage: this._selectImage),
                       SizedBox(height: 10),
-                      LocationInput(),
+                      LocationInput(onSelectPosition: this._selectPosition),
                     ],
                   ),
                 ),
@@ -65,7 +84,7 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
             ElevatedButton.icon(
               label: Text('Salvar'),
               icon: Icon(Icons.check),
-              onPressed: _submit,
+              onPressed: _isValidForm() ? _submit : null,
             ),
           ],
         ));

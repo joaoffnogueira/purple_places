@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:purple_places/screens/map_screen.dart';
 import 'package:purple_places/utils/location_util.dart';
 
 class LocationInput extends StatefulWidget {
-  const LocationInput({Key? key}) : super(key: key);
+  final Function onSelectPosition;
+  const LocationInput({required this.onSelectPosition, Key? key})
+      : super(key: key);
 
   @override
   State<LocationInput> createState() => _LocationInputState();
@@ -17,6 +21,27 @@ class _LocationInputState extends State<LocationInput> {
     final staticMapImageUrl = LocationUtil.generateLocationPreviewImage(
       latitude: locData.latitude ?? 0,
       longitude: locData.longitude ?? 0,
+    );
+    setState(() {
+      _previewImageUrl = staticMapImageUrl;
+      widget.onSelectPosition(LatLng(locData.latitude!, locData.longitude!));
+    });
+  }
+
+  Future<void> _selectOnMap() async {
+    final LatLng? selectedLocation = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) => MapScreen(),
+      ),
+    );
+    if (selectedLocation == null) {
+      return;
+    }
+    widget.onSelectPosition(selectedLocation);
+    final staticMapImageUrl = LocationUtil.generateLocationPreviewImage(
+      latitude: selectedLocation.latitude,
+      longitude: selectedLocation.longitude,
     );
     setState(() {
       _previewImageUrl = staticMapImageUrl;
@@ -55,7 +80,7 @@ class _LocationInputState extends State<LocationInput> {
               label: Text('Localização Atual'),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: _selectOnMap,
               icon: Icon(Icons.map),
               label: Text('Selecione no mapa'),
             )
