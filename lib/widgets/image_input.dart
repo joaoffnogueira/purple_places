@@ -34,11 +34,12 @@ class _ImageInputState extends State<ImageInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 180,
-          height: 100,
+          height: 180,
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
@@ -54,8 +55,9 @@ class _ImageInputState extends State<ImageInput> {
                   textAlign: TextAlign.center,
                 ),
         ),
-        SizedBox(width: 10),
-        Expanded(
+        SizedBox(height: 10),
+        Flexible(
+          fit: FlexFit.loose,
           child: TextButton.icon(
             icon: Icon(Icons.camera),
             label: Text('Tirar foto'),

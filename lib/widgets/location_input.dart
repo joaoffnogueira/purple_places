@@ -53,8 +53,8 @@ class _LocationInputState extends State<LocationInput> {
     return Column(
       children: [
         Container(
-          height: 170,
-          width: double.infinity,
+          height: 180,
+          width: 180,
           decoration: BoxDecoration(
             border: Border.all(width: 1, color: Colors.grey),
           ),
