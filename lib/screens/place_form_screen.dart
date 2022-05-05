@@ -39,6 +39,8 @@ class _PlaceFormScreenState extends State<PlaceFormScreen> {
   void _submit() {
     final title = _titleController.text;
     if (!_isValidForm()) return;
+    if (Provider.of<GreatPlaces>(context, listen: false).itemsCount >= 10)
+      return;
 
     Provider.of<GreatPlaces>(context, listen: false).addPlace(
       title,
