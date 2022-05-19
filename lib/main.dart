@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
       create: (_) => GreatPlaces(),
       child: MaterialApp(
         title: 'Purple Places',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.deepPurple, 
         ),
